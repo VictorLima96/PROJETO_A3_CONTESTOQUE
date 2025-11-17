@@ -11,7 +11,7 @@ public class TelaCadastroUsuario extends JFrame {
     private final JTextField txtNome;
     private final JTextField txtLogin;
     private final JPasswordField txtSenha;
-    private final JCheckBox chkAdmin;
+
 
     public TelaCadastroUsuario() {
         setTitle("Cadastro de Usuário");
@@ -45,9 +45,7 @@ public class TelaCadastroUsuario extends JFrame {
         txtSenha.setBounds(150, 120, 180, 25);
         add(txtSenha);
 
-        chkAdmin = new JCheckBox("Administrador");
-        chkAdmin.setBounds(150, 160, 150, 25);
-        add(chkAdmin);
+        
 
         JButton btnSalvar = new JButton("Cadastrar");
         btnSalvar.setBounds(130, 200, 120, 35);
@@ -59,14 +57,13 @@ public class TelaCadastroUsuario extends JFrame {
         String nome = txtNome.getText();
         String login = txtLogin.getText();
         String senha = new String(txtSenha.getPassword());
-        boolean admin = chkAdmin.isSelected();
 
         if (nome.isEmpty() || login.isEmpty() || senha.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
             return;
         }
 
-        Usuario usuario = new Usuario(nome, login, senha, admin);
+        Usuario usuario = new Usuario(nome, login, senha, false);
         UsuarioDAO.salvar(usuario);
         JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
         dispose();

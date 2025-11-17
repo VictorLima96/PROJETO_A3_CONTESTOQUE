@@ -5,6 +5,8 @@ import model.Usuario;
 import utils.KonamiListener;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import ui.TelaCadastroUsuario;
+
  
 public class TelaLogin extends JFrame {
  
@@ -53,6 +55,14 @@ public class TelaLogin extends JFrame {
         login.setBounds(110, 120, 100, 30);
         login.addActionListener(this::loginAction);
         add(login);
+
+        JButton cadastrar = new JButton("Cadastrar");
+        cadastrar.setBounds(220, 120, 100, 30);
+        cadastrar.addActionListener(e -> {
+            TelaCadastroUsuario telaCadastro = new TelaCadastroUsuario();
+            telaCadastro.setVisible(true);
+        });
+        add(cadastrar);
     }
  
     private void toggleSenha(JButton botao) {
@@ -84,4 +94,5 @@ public class TelaLogin extends JFrame {
             JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos!");
         }
     }
+
 }
