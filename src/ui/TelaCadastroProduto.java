@@ -1,46 +1,70 @@
 package ui;
- 
+
 import dao.ProdutoDAO;
-import dao.ProdutoDAO.Produto;
- 
+import model.Produto;
+
 import javax.swing.*;
- 
+import java.awt.event.ActionEvent;
+
 public class TelaCadastroProduto extends JFrame {
- 
-    public TelaCadastroProduto(TelaEstoque estoque) {
+
+    private final JTextField txtNome;
+    private final JTextField txtQtd;
+    ProdutoDAO dao = new ProdutoDAO();
+
+    public TelaCadastroProduto() {
         setTitle("Cadastro de Produto");
-        setSize(300, 200);
+        setSize(350, 250); // Aumentei um pouco a altura para caber os botões
         setLayout(null);
         setLocationRelativeTo(null);
- 
-        JLabel ln = new JLabel("Nome:");
-        ln.setBounds(20, 20, 80, 25);
-        add(ln);
- 
-        JTextField nome = new JTextField();
-        nome.setBounds(100, 20, 150, 25);
-        add(nome);
- 
-        JLabel lq = new JLabel("Quantidade:");
-        lq.setBounds(20, 60, 80, 25);
-        add(lq);
- 
-        JTextField qtd = new JTextField();
-        qtd.setBounds(100, 60, 150, 25);
-        add(qtd);
- 
-        JButton salvar = new JButton("Salvar");
-        salvar.setBounds(80, 110, 120, 30);
-        salvar.addActionListener(e -> {
-            String n = nome.getText();
-            int q = Integer.parseInt(qtd.getText());
- 
-            ProdutoDAO.getInstance().cadastrarProduto(new Produto(n, q));
- 
-            estoque.atualizarTabela();
+
+        JLabel lblNome = new JLabel("Nome:");
+        lblNome.setBounds(30, 20, 100, 25);
+        add(lblNome);
+
+        txtNome = new JTextField();
+        txtNome.setBounds(110, 20, 180, 25);
+        add(txtNome);
+
+        JLabel lblQtd = new JLabel("Quantidade:");
+        lblQtd.setBounds(30, 60, 100, 25);
+        add(lblQtd);
+
+        txtQtd = new JTextField();
+        txtQtd.setBounds(110, 60, 180, 25);
+        add(txtQtd);
+
+        // Painel para os botões ficarem lado a lado
+        JButton btnSalvar = new JButton("Salvar");
+        btnSalvar.setBounds(50, 110, 120, 30);
+        btnSalvar.addActionListener(this::salvarProduto);
+        add(btnSalvar);
+
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.setBounds(180, 110, 120, 30); // Ao lado do botão Salvar
+        btnVoltar.addActionListener(e -> {
+            new TelaEstoque().setVisible(true);
             dispose();
         });
- 
-        add(salvar);
+        add(btnVoltar);
+    }
+    
+    private void salvarProduto(ActionEvent e) {
+        try {
+            String nome = txtNome.getText();
+            int qtd = Integer.parseInt(txtQtd.getText());
+
+            dao.salvar(new Produto(nome, qtd));
+
+            JOptionPane.showMessageDialog(this, "Produto salvo!");
+            
+            // Limpar campos em vez de fechar
+            txtNome.setText("");
+            txtQtd.setText("");
+            txtNome.requestFocus(); // Foca no primeiro campo
+            
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Quantidade deve ser um número!");
+        }
     }
 }

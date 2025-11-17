@@ -8,62 +8,77 @@ import java.awt.event.ActionEvent;
 
 public class TelaCadastroUsuario extends JFrame {
 
-    private final JTextField txtNome;
-    private final JTextField txtLogin;
+    private final JTextField txtUsuario;
     private final JPasswordField txtSenha;
-
+    private final JCheckBox chkAdmin;
 
     public TelaCadastroUsuario() {
         setTitle("Cadastro de Usuário");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setSize(350, 280); // Aumentei a altura para caber os botões
         setLayout(null);
+        setLocationRelativeTo(null);
         setResizable(false);
 
-        JLabel lblNome = new JLabel("Nome:");
-        lblNome.setBounds(50, 40, 100, 25);
-        add(lblNome);
+        JLabel lblUsu = new JLabel("Usuário:");
+        lblUsu.setBounds(30, 20, 100, 25);
+        add(lblUsu);
 
-        txtNome = new JTextField();
-        txtNome.setBounds(150, 40, 180, 25);
-        add(txtNome);
-
-        JLabel lblLogin = new JLabel("Login:");
-        lblLogin.setBounds(50, 80, 100, 25);
-        add(lblLogin);
-
-        txtLogin = new JTextField();
-        txtLogin.setBounds(150, 80, 180, 25);
-        add(txtLogin);
+        txtUsuario = new JTextField();
+        txtUsuario.setBounds(110, 20, 180, 25);
+        add(txtUsuario);
 
         JLabel lblSenha = new JLabel("Senha:");
-        lblSenha.setBounds(50, 120, 100, 25);
+        lblSenha.setBounds(30, 60, 100, 25);
         add(lblSenha);
 
         txtSenha = new JPasswordField();
-        txtSenha.setBounds(150, 120, 180, 25);
+        txtSenha.setBounds(110, 60, 180, 25);
         add(txtSenha);
 
-        JButton btnSalvar = new JButton("Cadastrar");
-        btnSalvar.setBounds(130, 200, 120, 35);
-        btnSalvar.addActionListener(this::salvarUsuario);
-        add(btnSalvar);
+        chkAdmin = new JCheckBox("Administrador");
+        chkAdmin.setBounds(110, 95, 150, 25);
+        add(chkAdmin);
+
+        // Botões lado a lado
+        JButton btnCadastrar = new JButton("Cadastrar");
+        btnCadastrar.setBounds(50, 140, 120, 30);
+        btnCadastrar.addActionListener(this::salvarUsuario);
+        add(btnCadastrar);
+
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.setBounds(180, 140, 120, 30); // Ao lado do botão Cadastrar
+        btnVoltar.addActionListener(e -> {
+            new TelaEstoque().setVisible(true);
+            dispose();
+        });
+        add(btnVoltar);
     }
 
     private void salvarUsuario(ActionEvent e) {
-        String nome = txtNome.getText();
-        String login = txtLogin.getText();
+        String usuario = txtUsuario.getText().trim();
         String senha = new String(txtSenha.getPassword());
-
-        if (nome.isEmpty() || login.isEmpty() || senha.isEmpty()) {
+        
+        // Validações
+        if (usuario.isEmpty() || senha.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
             return;
         }
+        
+        if (senha.length() < 3) {
+            JOptionPane.showMessageDialog(this, "Senha deve ter pelo menos 3 caracteres!");
+            return;
+        }
 
-        Usuario usuario = new Usuario(nome, login, senha, false);
-        UsuarioDAO.salvar(usuario);
-        JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-        dispose();
+        boolean admin = chkAdmin.isSelected();
+        Usuario novo = new Usuario(usuario, senha, admin);
+        UsuarioDAO.salvar(novo);
+
+        JOptionPane.showMessageDialog(this, "Usuário cadastrado!");
+        
+        // Limpar campos
+        txtUsuario.setText("");
+        txtSenha.setText("");
+        chkAdmin.setSelected(false);
+        txtUsuario.requestFocus();
     }
 }

@@ -1,29 +1,38 @@
 package model;
- 
-public class Usuario {
-    private int id;
-    private final String usuario;
-    private final boolean isAdmin;
- 
-        public Usuario(String u, String s, String senha, boolean admin) {
-            this.usuario = u;
-            this.isAdmin = admin;
-        }
 
-    public String getUsuario() {
-        return this.usuario;
+public class Usuario {
+
+    private String usuario;
+    private String senha;
+    private boolean admin;
+
+    public Usuario(String usuario, String senha, boolean admin) {
+        this.usuario = usuario;
+        this.senha = senha;
+        this.admin = admin;
     }
 
-    public int getId() {
-        return this.id;
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public boolean isAdmin() {
-        return this.isAdmin;
+        return admin;
     }
 
-    public static String getSenha() {
-        return "12345";
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
-
-    }
+}
