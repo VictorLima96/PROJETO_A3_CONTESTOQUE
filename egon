@@ -1,0 +1,297 @@
+Beleza, vamos por partes. Vou te explicar **o que normalmente causa esses 3 problemas** e te dar **modelos de código** pra você comparar/ajustar no seu projeto.
+
+> Obs: eu até tenho acesso ao seu `src.rar`, mas o ambiente aqui não consegue “descompactar” o `.rar` por completo, então não consigo olhar exatamente o seu código. Vou te passar o caminho mais provável de correção com base na estrutura que eu vi (tem `UsuarioDAO`, `TelaLogin`, `TelaAdminUsuarios`, etc).
+
+---
+
+## 1. Admin não consegue administrar usuários criados
+
+**Sintoma mais comum:**
+O sistema só reconhece o “admin padrão” (por exemplo, login `admin/admin`) como administrador, porque o código de login está “travado” num usuário fixo, ou o campo de permissão (tipo / perfil / admin) não está sendo carregado do banco.
+
+### Como deveria funcionar
+
+No banco você precisa ter algo assim na tabela de usuários:
+
+```sql
+id INT PK
+nome VARCHAR(100)
+login VARCHAR(50)
+senha VARCHAR(50)
+tipo VARCHAR(20)  -- "ADMIN" ou "USUARIO"
+```
+
+No `Usuario` (model):
+
+```java
+public class Usuario {
+    private int id;
+    private String nome;
+    private String login;
+    private String senha;
+    private String tipo; // "ADMIN" ou "USUARIO"
+
+    // getters e setters
+}
+```
+
+No `UsuarioDAO`, no método que faz o login:
+
+```java
+public Usuario autenticar(String login, String senha) {
+    String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
+    try (PreparedStatement st = conexao.prepareStatement(sql)) {
+        st.setString(1, login);
+        st.setString(2, senha);
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            Usuario u = new Usuario();
+            u.setId(rs.getInt("id"));
+            u.setNome(rs.getString("nome"));
+            u.setLogin(rs.getString("login"));
+            u.setSenha(rs.getString("senha"));
+            u.setTipo(rs.getString("tipo")); // IMPORTANTE
+            return u;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+```
+
+E **no botão de login da `TelaLogin`**, em vez de comparar usuario fixo, você usa o tipo:
+
+```java
+private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {
+    String login = txtLogin.getText();
+    String senha = new String(txtSenha.getPassword());
+
+    UsuarioDAO dao = new UsuarioDAO();
+    Usuario logado = dao.autenticar(login, senha);
+
+    if (logado == null) {
+        JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos");
+        return;
+    }
+
+    // Se for admin, abre tela de admin de usuários/produtos
+    if ("ADMIN".equalsIgnoreCase(logado.getTipo())) {
+        new TelaAdminUsuarios(logado).setVisible(true);
+        // ou tela principal de admin
+    } else {
+        new TelaUsuarioPrincipal(logado).setVisible(true);
+    }
+
+    this.dispose();
+}
+```
+
+👉 **Possível erro que você deve ter hoje:**
+Algo desse tipo:
+
+```java
+if (login.equals("admin") && senha.equals("admin")) {
+    // abre tela admin
+} else {
+    // abre tela normal
+}
+```
+
+Se estiver assim, o admin só funciona pra esse usuário padrão.
+**Troque isso para usar o campo `tipo` vindo do banco**, como mostrei.
+
+---
+
+## 2. Cadastros criados não podem ser alterados (nem pelo admin nem pelo usuário)
+
+Isso quase sempre é um problema de **UPDATE** (DAO) + **ID não preenchido** na tela.
+
+### Check 1 – Seu DAO de update existe e está certo?
+
+Exemplo `UsuarioDAO`:
+
+```java
+public void atualizar(Usuario u) {
+    String sql = "UPDATE usuarios SET nome=?, login=?, senha=?, tipo=? WHERE id=?";
+    try (PreparedStatement st = conexao.prepareStatement(sql)) {
+        st.setString(1, u.getNome());
+        st.setString(2, u.getLogin());
+        st.setString(3, u.getSenha());
+        st.setString(4, u.getTipo());
+        st.setInt(5, u.getId()); // ESSENCIAL
+        st.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+Exemplo `ProdutoDAO` (análogo):
+
+```java
+public void atualizar(Produto p) {
+    String sql = "UPDATE produtos SET nome=?, descricao=?, preco=? WHERE id=?";
+    try (PreparedStatement st = conexao.prepareStatement(sql)) {
+        st.setString(1, p.getNome());
+        st.setString(2, p.getDescricao());
+        st.setDouble(3, p.getPreco());
+        st.setInt(4, p.getId());
+        st.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+### Check 2 – Na tela, o ID está sendo carregado?
+
+Quando o usuário seleciona um registro na tabela (por exemplo, na `TelaAdminUsuarios`), você precisa **preencher o campo ID escondido ou não editável**:
+
+```java
+private void tabelaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {
+    int linha = tabelaUsuarios.getSelectedRow();
+    txtId.setText(tabelaUsuarios.getValueAt(linha, 0).toString());
+    txtNome.setText(tabelaUsuarios.getValueAt(linha, 1).toString());
+    txtLogin.setText(tabelaUsuarios.getValueAt(linha, 2).toString());
+    comboTipo.setSelectedItem(tabelaUsuarios.getValueAt(linha, 3).toString());
+}
+```
+
+### Check 3 – No botão “Salvar”, você está diferenciando **inserir x atualizar**?
+
+Padrão de código pra isso:
+
+```java
+private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
+    Usuario u = new Usuario();
+    u.setNome(txtNome.getText());
+    u.setLogin(txtLogin.getText());
+    u.setSenha(new String(txtSenha.getPassword()));
+    u.setTipo(comboTipo.getSelectedItem().toString());
+
+    UsuarioDAO dao = new UsuarioDAO();
+
+    if (txtId.getText().isEmpty()) {
+        // NOVO
+        dao.inserir(u);
+        JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
+    } else {
+        // ALTERAÇÃO
+        u.setId(Integer.parseInt(txtId.getText()));
+        dao.atualizar(u);
+        JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!");
+    }
+
+    listarUsuarios(); // recarrega a tabela
+    limparCampos();
+}
+```
+
+👉 **Erros comuns que fazem “não alterar nunca”:**
+
+* Nunca chamar o método `atualizar`, só `inserir`.
+* `WHERE` do update sem `id` ou com outro campo errado.
+* Campo `txtId` nunca preenchido, então **sempre cai no “inserir”**.
+* Botão “Alterar” desabilitado por lógica de permissão engessada.
+
+---
+
+## 3. Usuário comum ter tela diferente do administrador
+
+Você já tem várias telas (`TelaAdminUsuarios`, `TelaAdminProdutos`, etc.).
+O ideal é criar **uma tela principal de Admin** e **uma tela principal de Usuário**.
+
+### Passo 1 – Separar as telas
+
+* `TelaAdminPrincipal`
+
+  * Pode ter menus/botões:
+
+    * Gerenciar Usuários
+    * Gerenciar Produtos
+    * Estoque
+    * Relatórios, etc.
+
+* `TelaUsuarioPrincipal`
+
+  * **Somente**:
+
+    * Criar cadastro (por ex., cadastro de produto, cliente, etc.)
+    * Alterar cadastro (somente o que ele tiver permissão)
+
+Exemplo de uma tela simples de usuário:
+
+```java
+public class TelaUsuarioPrincipal extends javax.swing.JFrame {
+
+    private Usuario usuarioLogado;
+
+    public TelaUsuarioPrincipal(Usuario usuario) {
+        initComponents();
+        this.usuarioLogado = usuario;
+        lblUsuario.setText("Bem-vindo, " + usuario.getNome());
+    }
+
+    // Botão Criar Cadastro
+    private void btnCriarCadastroActionPerformed(java.awt.event.ActionEvent evt) {
+        new TelaCadastroProduto(usuarioLogado).setVisible(true);
+    }
+
+    // Botão Alterar Cadastro
+    private void btnAlterarCadastroActionPerformed(java.awt.event.ActionEvent evt) {
+        new TelaCadastroProduto(usuarioLogado, /*modoEdicao=*/true).setVisible(true);
+    }
+}
+```
+
+### Passo 2 – Decidir a tela no login (ligado ao item 1)
+
+Voltando ao login:
+
+```java
+if ("ADMIN".equalsIgnoreCase(logado.getTipo())) {
+    new TelaAdminPrincipal(logado).setVisible(true);
+} else {
+    new TelaUsuarioPrincipal(logado).setVisible(true);
+}
+this.dispose();
+```
+
+Assim:
+
+* Qualquer usuário com `tipo = 'ADMIN'` vê as telas completas e consegue administrar todos os usuários/cadastros.
+* Qualquer usuário com `tipo = 'USUARIO'` cai em uma tela mais simples, apenas com as funções que você quer (criar/alterar cadastros).
+
+---
+
+## Resumo das ações pra você checar no seu projeto
+
+1. **Verificar o login**
+
+   * Garantir que você está usando um campo de tipo/perfil (`ADMIN` x `USUARIO`) vindo do banco, e não usuário fixo `admin/admin`.
+
+2. **Verificar os métodos de UPDATE (DAO)**
+
+   * Confirme se existem `atualizarUsuario`, `atualizarProduto`, etc.
+   * Confirme se usam `WHERE id = ?`.
+
+3. **Verificar as telas de edição**
+
+   * Quando seleciona um registro na tabela, o `id` vai para o campo escondido?
+   * O botão de salvar está fazendo “se tem ID -> atualizar; se não tem ID -> inserir”?
+
+4. **Criar/usar duas telas principais**
+
+   * `TelaAdminPrincipal` (para admins).
+   * `TelaUsuarioPrincipal` (para usuários comuns, só com criar/alterar).
+
+---
+
+Se você quiser, no próximo passo você pode **copiar e colar aqui** especificamente:
+
+* O código do **`TelaLogin`**,
+* O `Usuario`
+* E o `UsuarioDAO`
+
+que eu adapto exatamente em cima do que você já tem (sem mudar o resto do projeto).
