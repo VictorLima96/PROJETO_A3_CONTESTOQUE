@@ -45,8 +45,6 @@ public class TelaCadastroUsuario extends JFrame {
         txtSenha.setBounds(150, 120, 180, 25);
         add(txtSenha);
 
-        
-
         JButton btnSalvar = new JButton("Cadastrar");
         btnSalvar.setBounds(130, 200, 120, 35);
         btnSalvar.addActionListener(this::salvarUsuario);

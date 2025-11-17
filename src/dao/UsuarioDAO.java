@@ -36,6 +36,7 @@ public class UsuarioDAO {
     }
 
     public static void salvar(Usuario usuario) {
+
         throw new UnsupportedOperationException("Unimplemented method 'salvar'");
     }
 }
