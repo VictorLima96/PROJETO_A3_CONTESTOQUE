@@ -12,8 +12,8 @@ public class UsuarioDAO {
         fakeDB.add(new Usuario("kaique", "senha", senha, false));
     }
 
-    public static void salvar(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public static String salvar() {
+        return salvar();
     }
 
     public static String getSenha() {
@@ -33,5 +33,9 @@ public class UsuarioDAO {
  
     public ArrayList<Usuario> getAll() {
         return fakeDB;
+    }
+
+    public static void salvar(Usuario usuario) {
+        throw new UnsupportedOperationException("Unimplemented method 'salvar'");
     }
 }

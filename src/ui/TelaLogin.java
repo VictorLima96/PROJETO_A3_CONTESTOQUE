@@ -5,8 +5,6 @@ import model.Usuario;
 import utils.KonamiListener;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import ui.TelaCadastroUsuario;
-
  
 public class TelaLogin extends JFrame {
  
