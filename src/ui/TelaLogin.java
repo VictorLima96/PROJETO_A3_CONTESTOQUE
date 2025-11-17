@@ -12,6 +12,8 @@ public class TelaLogin extends JFrame {
     private final JPasswordField txtSenha;
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
  
+    private boolean senhaVisivel = false; // controle da visibilidade
+ 
     public TelaLogin() {
         setTitle("Login do Sistema");
         setSize(350, 230);
@@ -19,7 +21,7 @@ public class TelaLogin extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
- 
+
         addKeyListener(new KonamiListener(this.getContentPane()));
         setFocusable(true);
  
@@ -36,13 +38,32 @@ public class TelaLogin extends JFrame {
         add(l2);
  
         txtSenha = new JPasswordField();
-        txtSenha.setBounds(110, 70, 180, 25);
+        txtSenha.setBounds(110, 70, 150, 25);
+        txtSenha.setEchoChar('*');
         add(txtSenha);
  
+        // 🔵 BOTÃO DE MOSTRAR/OCULTAR SENHA
+        JButton btVerSenha = new JButton("👁");
+        btVerSenha.setBounds(265, 70, 30, 25);
+        btVerSenha.addActionListener(e -> toggleSenha(btVerSenha));
+        add(btVerSenha);
+ 
         JButton login = new JButton("Entrar");
+        getRootPane().setDefaultButton(login);
         login.setBounds(110, 120, 100, 30);
         login.addActionListener(this::loginAction);
         add(login);
+    }
+ 
+    private void toggleSenha(JButton botao) {
+        if (senhaVisivel) {
+            txtSenha.setEchoChar('*');
+            botao.setText("👁");
+        } else {
+            txtSenha.setEchoChar((char) 0); // mostra texto real
+            botao.setText("🚫");
+        }
+        senhaVisivel = !senhaVisivel;
     }
  
     private void loginAction(ActionEvent evt) {

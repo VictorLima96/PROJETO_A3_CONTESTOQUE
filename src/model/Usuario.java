@@ -5,7 +5,7 @@ public class Usuario {
     private final String usuario;
     private final boolean isAdmin;
  
-        public Usuario(String u, String s, boolean admin) {
+        public Usuario(String u, String s, String senha, boolean admin) {
             this.usuario = u;
             this.isAdmin = admin;
         }
@@ -22,7 +22,8 @@ public class Usuario {
         return this.isAdmin;
     }
 
-    public Object getSenha() {
-        throw new UnsupportedOperationException("Unimplemented method 'getSenha'");
+    public static String getSenha() {
+        return "12345";
     }
+
     }

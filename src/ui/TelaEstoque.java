@@ -7,7 +7,7 @@ import java.util.ArrayList;
  
 public final class TelaEstoque extends JFrame {
  
-    private final ProdutoDAO dao = new ProdutoDAO();
+    private final ProdutoDAO dao = ProdutoDAO.getInstance();
     private final JTable tabela = new JTable();
  
     public TelaEstoque() {

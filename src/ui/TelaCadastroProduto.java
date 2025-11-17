@@ -35,7 +35,7 @@ public class TelaCadastroProduto extends JFrame {
             String n = nome.getText();
             int q = Integer.parseInt(qtd.getText());
  
-            new ProdutoDAO().cadastrarProduto(new Produto(n, q));
+            ProdutoDAO.getInstance().cadastrarProduto(new Produto(n, q));
  
             estoque.atualizarTabela();
             dispose();
