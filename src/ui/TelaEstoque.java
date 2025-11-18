@@ -1,19 +1,16 @@
 package ui;
 
+import javax.swing.*;
 import utils.KonamiListener;
 
-import javax.swing.*;
-
 public class TelaEstoque extends JFrame {
-
     public TelaEstoque() {
-        setTitle("Controle de Estoque");
+        super("Controle de Estoque");
         setSize(600, 400);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Botão Voltar
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.setBounds(10, 10, 100, 30);
         btnVoltar.addActionListener(e -> {
@@ -32,23 +29,21 @@ public class TelaEstoque extends JFrame {
         btnCadProd.addActionListener(e -> new TelaCadastroProduto().setVisible(true));
         add(btnCadProd);
 
-        // Botão Administração de Usuários
-        JButton btnAdminUsuarios = new JButton("Administrar Usuários");
-        btnAdminUsuarios.setBounds(180, 190, 220, 40);
-        btnAdminUsuarios.addActionListener(e -> {
+        JButton btnAdminUsu = new JButton("Administrar Usuários");
+        btnAdminUsu.setBounds(180, 190, 220, 40);
+        btnAdminUsu.addActionListener(e -> {
             new TelaAdminUsuarios().setVisible(true);
             dispose();
         });
-        add(btnAdminUsuarios);
+        add(btnAdminUsu);
 
-        // Botão Administração de Produtos - NOVO
-        JButton btnAdminProdutos = new JButton("Administrar Produtos");
-        btnAdminProdutos.setBounds(180, 260, 220, 40);
-        btnAdminProdutos.addActionListener(e -> {
+        JButton btnAdminProd = new JButton("Administrar Produtos");
+        btnAdminProd.setBounds(180, 260, 220, 40);
+        btnAdminProd.addActionListener(e -> {
             new TelaAdminProdutos().setVisible(true);
             dispose();
         });
-        add(btnAdminProdutos);
+        add(btnAdminProd);
 
         addKeyListener(new KonamiListener(this));
         setFocusable(true);

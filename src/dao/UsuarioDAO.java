@@ -1,32 +1,56 @@
 package dao;
 
-import model.Usuario;
+import database.DatabaseManager;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import model.Usuario;
 
 public class UsuarioDAO {
 
-    private static final ArrayList<Usuario> fakeDB = new ArrayList<>();
-
-    static {
-        fakeDB.add(new Usuario("admin", "12345", true)); // usuário padrão
+    public void salvar(Usuario u) {
+        String sql = "INSERT INTO usuarios (usuario, senha, admin) VALUES (?,?,?)";
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, u.getUsuario());
+            p.setString(2, u.getSenha());
+            p.setBoolean(3, u.isAdmin());
+            p.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public Usuario login(String usuario, String senha) {
-        return fakeDB.stream()
-                .filter(u -> u.getUsuario().equals(usuario) && u.getSenha().equals(senha))
-                .findFirst()
-                .orElse(null);
+        String sql = "SELECT * FROM usuarios WHERE usuario=? AND senha=?";
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, usuario);
+            p.setString(2, senha);
+            ResultSet rs = p.executeQuery();
+            if (rs.next()) return new Usuario(
+                    rs.getString("usuario"),
+                    rs.getString("senha"),
+                    rs.getBoolean("admin"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static void salvar(Usuario usuario) {
-        fakeDB.add(usuario);
-        System.out.println("Usuário salvo: " + usuario.getUsuario());
+    public List<Usuario> getAll() {
+        List<Usuario> lista = new ArrayList<>();
+        String sql = "SELECT * FROM usuarios";
+        try (Connection c = DatabaseManager.getConnection();
+             Statement s = c.createStatement();
+             ResultSet rs = s.executeQuery(sql)) {
+            while (rs.next()) lista.add(new Usuario(
+                    rs.getString("usuario"),
+                    rs.getString("senha"),
+                    rs.getBoolean("admin")));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
-
-    public ArrayList<Usuario> getAll() {
-        return fakeDB;
-    }
-
-    
-
 }
