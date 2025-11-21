@@ -57,8 +57,8 @@ public class TelaCadastroUsuario extends JFrame {
             JOptionPane.showMessageDialog(this, "Senha deve ter pelo menos 3 caracteres!");
             return;
         }
-        Usuario novo = new Usuario(usuario, senha, chkAdmin.isSelected());
-        new UsuarioDAO().salvar(novo);
+
+        new UsuarioDAO().criarUsuario(new Usuario().setNomeUsuario(usuario).setSenha(senha));
         JOptionPane.showMessageDialog(this, "✅ Usuário cadastrado com sucesso!");
         txtUsuario.setText("");
         txtSenha.setText("");

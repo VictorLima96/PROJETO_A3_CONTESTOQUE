@@ -28,7 +28,7 @@ public class TelaAdminUsuarios extends JFrame {
         panelBotoes.add(btnCadastrar);
 
         DefaultListModel<String> model = new DefaultListModel<>();
-        dao.getAll().forEach(u -> model.addElement(u.getUsuario() + (u.isAdmin() ? " (admin)" : "")));
+        dao.obterTodos().forEach(u -> model.addElement(u.getCodUsuario() + (u.getIsAdmin() ? " (admin)" : "")));
         JList<String> lista = new JList<>(model);
 
         add(panelBotoes, BorderLayout.NORTH);

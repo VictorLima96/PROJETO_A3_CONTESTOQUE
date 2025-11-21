@@ -1,297 +1,144 @@
-Beleza, vamos por partes. Vou te explicar **o que normalmente causa esses 3 problemas** e te dar **modelos de código** pra você comparar/ajustar no seu projeto.
+# JavaParcel - Sistema de Gerenciamento de Encomendas
 
-> Obs: eu até tenho acesso ao seu `src.rar`, mas o ambiente aqui não consegue “descompactar” o `.rar` por completo, então não consigo olhar exatamente o seu código. Vou te passar o caminho mais provável de correção com base na estrutura que eu vi (tem `UsuarioDAO`, `TelaLogin`, `TelaAdminUsuarios`, etc).
+## 📦 Sobre o Projeto
 
----
+O **JavaParcel** é um sistema completo de gerenciamento e rastreamento de encomendas desenvolvido em Java, criado como parte da **Atividade A3 do 2º Semestre** da disciplina de **Programação de Soluções Computacionais** da **Universidade São Judas**.
 
-## 1. Admin não consegue administrar usuários criados
+O projeto consiste em uma aplicação desktop que oferece duas funcionalidades principais:
 
-**Sintoma mais comum:**
-O sistema só reconhece o “admin padrão” (por exemplo, login `admin/admin`) como administrador, porque o código de login está “travado” num usuário fixo, ou o campo de permissão (tipo / perfil / admin) não está sendo carregado do banco.
+- **Painel Administrativo**: Sistema com autenticação para gerenciar encomendas (cadastro, edição e exclusão)
+- **Sistema de Rastreio**: Interface pública para consultar o status e localização de encomendas
 
-### Como deveria funcionar
+## 🎯 Contexto
 
-No banco você precisa ter algo assim na tabela de usuários:
+Este sistema foi desenvolvido para simular um ambiente real de gestão logística, onde administradores podem controlar todo o ciclo de vida das encomendas e os usuários finais podem acompanhar suas entregas de forma prática e intuitiva. O projeto aplica conceitos fundamentais de programação orientada a objetos, manipulação de banco de dados e desenvolvimento de interfaces gráficas.
+
+## 🚀 Funcionalidades
+
+### Painel Administrativo
+
+- **Login e Cadastro de Administradores**: Sistema de autenticação seguro para acesso ao painel
+- **Gestão de Encomendas**:
+  - Cadastrar novas encomendas
+  - Editar informações de encomendas existentes
+  - Remover encomendas do sistema
+  - Visualizar lista completa de encomendas
+  - Atualizar status de entrega
+
+### Sistema de Rastreio
+
+- **Consulta Pública**: Rastreamento de encomendas através de código único
+- **Visualização de Status**: Informações detalhadas sobre localização e etapa da entrega
+- **Interface Intuitiva**: Experiência simplificada para o usuário final
+
+## 💻 Tecnologias Utilizadas
+
+### Linguagem e Framework
+
+- **Java**: Linguagem principal do projeto, utilizando paradigma orientado a objetos
+- **Swing/JOptionPane**: Biblioteca Java para criação de interfaces gráficas desktop com diálogos interativos
+
+### Banco de Dados
+
+- **MySQL**: Sistema de gerenciamento de banco de dados relacional para armazenamento persistente
+- **JDBC**: API Java para conexão e manipulação do banco de dados MySQL
+
+### Ferramentas de Desenvolvimento
+
+- **JDK (Java Development Kit)**: Kit de desenvolvimento Java
+- **IDE**: Ambiente de desenvolvimento integrado (NetBeans, Eclipse ou IntelliJ IDEA)
+- **Git**: Controle de versão do código-fonte
+
+## 📋 Estrutura do Sistema
+
+```
+JavaParcel/
+├── src/
+│   ├── models/          # Classes de modelo (Encomenda, Usuário, etc.)
+│   ├── controllers/     # Lógica de negócio e controle
+│   ├── views/           # Interfaces gráficas (JOptionPane)
+│   ├── database/        # Conexão e operações com MySQL
+│   └── utils/           # Classes utilitárias
+├── database/
+│   └── schema.sql       # Script de criação do banco de dados
+└── README.md
+```
+
+## 🔧 Pré-requisitos
+
+Antes de executar o projeto, certifique-se de ter instalado:
+
+- **Java JDK 8** ou superior
+- **MySQL Server 5.7** ou superior
+- **MySQL Connector/J** (driver JDBC)
+- Uma IDE Java de sua preferência
+
+## ⚙️ Configuração e Instalação
+
+### 1. Configurar o Banco de Dados
 
 ```sql
-id INT PK
-nome VARCHAR(100)
-login VARCHAR(50)
-senha VARCHAR(50)
-tipo VARCHAR(20)  -- "ADMIN" ou "USUARIO"
+-- Criar o banco de dados
+CREATE DATABASE javaparcel;
+
+-- Usar o banco de dados
+USE javaparcel;
+
+-- As tabelas serão criadas automaticamente pelo sistema
+-- ou execute o script schema.sql se disponível
 ```
 
-No `Usuario` (model):
+### 2. Configurar Conexão com o Banco
+
+Edite as configurações de conexão no arquivo de configuração do projeto com suas credenciais do MySQL:
 
 ```java
-public class Usuario {
-    private int id;
-    private String nome;
-    private String login;
-    private String senha;
-    private String tipo; // "ADMIN" ou "USUARIO"
-
-    // getters e setters
-}
+String url = "jdbc:mysql://localhost:3306/javaparcel";
+String usuario = "root";
+String senha = "sua_senha";
 ```
 
-No `UsuarioDAO`, no método que faz o login:
+### 3. Compilar e Executar
 
-```java
-public Usuario autenticar(String login, String senha) {
-    String sql = "SELECT * FROM usuarios WHERE login = ? AND senha = ?";
-    try (PreparedStatement st = conexao.prepareStatement(sql)) {
-        st.setString(1, login);
-        st.setString(2, senha);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            Usuario u = new Usuario();
-            u.setId(rs.getInt("id"));
-            u.setNome(rs.getString("nome"));
-            u.setLogin(rs.getString("login"));
-            u.setSenha(rs.getString("senha"));
-            u.setTipo(rs.getString("tipo")); // IMPORTANTE
-            return u;
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return null;
-}
+```bash
+# Compilar o projeto
+javac -d bin src/**/*.java
+
+# Executar o sistema
+java -cp bin Main
 ```
 
-E **no botão de login da `TelaLogin`**, em vez de comparar usuario fixo, você usa o tipo:
+Ou utilize sua IDE para compilar e executar o projeto diretamente.
 
-```java
-private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {
-    String login = txtLogin.getText();
-    String senha = new String(txtSenha.getPassword());
+## 📱 Como Usar
 
-    UsuarioDAO dao = new UsuarioDAO();
-    Usuario logado = dao.autenticar(login, senha);
+### Para Administradores:
 
-    if (logado == null) {
-        JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos");
-        return;
-    }
+1. Execute o sistema e selecione "Painel Administrativo"
+2. Faça login com suas credenciais (ou cadastre-se se for o primeiro acesso)
+3. Utilize o menu para gerenciar encomendas:
+   - Cadastrar nova encomenda com dados do destinatário
+   - Atualizar status de encomendas existentes
+   - Consultar e editar informações
 
-    // Se for admin, abre tela de admin de usuários/produtos
-    if ("ADMIN".equalsIgnoreCase(logado.getTipo())) {
-        new TelaAdminUsuarios(logado).setVisible(true);
-        // ou tela principal de admin
-    } else {
-        new TelaUsuarioPrincipal(logado).setVisible(true);
-    }
+### Para Usuários:
 
-    this.dispose();
-}
-```
+1. Execute o sistema e selecione "Rastreamento de Encomendas"
+2. Informe o código de rastreamento da encomenda
+3. Visualize as informações e status atual da entrega
 
-👉 **Possível erro que você deve ter hoje:**
-Algo desse tipo:
+## 👥 Equipe
 
-```java
-if (login.equals("admin") && senha.equals("admin")) {
-    // abre tela admin
-} else {
-    // abre tela normal
-}
-```
+Projeto desenvolvido por alunos do 2º Semestre da Universidade São Judas como parte da Atividade A3.
 
-Se estiver assim, o admin só funciona pra esse usuário padrão.
-**Troque isso para usar o campo `tipo` vindo do banco**, como mostrei.
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins acadêmicos como parte da Atividade A3 da Universidade São Judas.
+
+## 📞 Suporte
+
+Para dúvidas ou problemas relacionados ao projeto, entre em contato com o professor responsável pela disciplina de Programação de Soluções Computacionais.
 
 ---
 
-## 2. Cadastros criados não podem ser alterados (nem pelo admin nem pelo usuário)
-
-Isso quase sempre é um problema de **UPDATE** (DAO) + **ID não preenchido** na tela.
-
-### Check 1 – Seu DAO de update existe e está certo?
-
-Exemplo `UsuarioDAO`:
-
-```java
-public void atualizar(Usuario u) {
-    String sql = "UPDATE usuarios SET nome=?, login=?, senha=?, tipo=? WHERE id=?";
-    try (PreparedStatement st = conexao.prepareStatement(sql)) {
-        st.setString(1, u.getNome());
-        st.setString(2, u.getLogin());
-        st.setString(3, u.getSenha());
-        st.setString(4, u.getTipo());
-        st.setInt(5, u.getId()); // ESSENCIAL
-        st.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
-```
-
-Exemplo `ProdutoDAO` (análogo):
-
-```java
-public void atualizar(Produto p) {
-    String sql = "UPDATE produtos SET nome=?, descricao=?, preco=? WHERE id=?";
-    try (PreparedStatement st = conexao.prepareStatement(sql)) {
-        st.setString(1, p.getNome());
-        st.setString(2, p.getDescricao());
-        st.setDouble(3, p.getPreco());
-        st.setInt(4, p.getId());
-        st.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
-```
-
-### Check 2 – Na tela, o ID está sendo carregado?
-
-Quando o usuário seleciona um registro na tabela (por exemplo, na `TelaAdminUsuarios`), você precisa **preencher o campo ID escondido ou não editável**:
-
-```java
-private void tabelaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {
-    int linha = tabelaUsuarios.getSelectedRow();
-    txtId.setText(tabelaUsuarios.getValueAt(linha, 0).toString());
-    txtNome.setText(tabelaUsuarios.getValueAt(linha, 1).toString());
-    txtLogin.setText(tabelaUsuarios.getValueAt(linha, 2).toString());
-    comboTipo.setSelectedItem(tabelaUsuarios.getValueAt(linha, 3).toString());
-}
-```
-
-### Check 3 – No botão “Salvar”, você está diferenciando **inserir x atualizar**?
-
-Padrão de código pra isso:
-
-```java
-private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
-    Usuario u = new Usuario();
-    u.setNome(txtNome.getText());
-    u.setLogin(txtLogin.getText());
-    u.setSenha(new String(txtSenha.getPassword()));
-    u.setTipo(comboTipo.getSelectedItem().toString());
-
-    UsuarioDAO dao = new UsuarioDAO();
-
-    if (txtId.getText().isEmpty()) {
-        // NOVO
-        dao.inserir(u);
-        JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-    } else {
-        // ALTERAÇÃO
-        u.setId(Integer.parseInt(txtId.getText()));
-        dao.atualizar(u);
-        JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!");
-    }
-
-    listarUsuarios(); // recarrega a tabela
-    limparCampos();
-}
-```
-
-👉 **Erros comuns que fazem “não alterar nunca”:**
-
-* Nunca chamar o método `atualizar`, só `inserir`.
-* `WHERE` do update sem `id` ou com outro campo errado.
-* Campo `txtId` nunca preenchido, então **sempre cai no “inserir”**.
-* Botão “Alterar” desabilitado por lógica de permissão engessada.
-
----
-
-## 3. Usuário comum ter tela diferente do administrador
-
-Você já tem várias telas (`TelaAdminUsuarios`, `TelaAdminProdutos`, etc.).
-O ideal é criar **uma tela principal de Admin** e **uma tela principal de Usuário**.
-
-### Passo 1 – Separar as telas
-
-* `TelaAdminPrincipal`
-
-  * Pode ter menus/botões:
-
-    * Gerenciar Usuários
-    * Gerenciar Produtos
-    * Estoque
-    * Relatórios, etc.
-
-* `TelaUsuarioPrincipal`
-
-  * **Somente**:
-
-    * Criar cadastro (por ex., cadastro de produto, cliente, etc.)
-    * Alterar cadastro (somente o que ele tiver permissão)
-
-Exemplo de uma tela simples de usuário:
-
-```java
-public class TelaUsuarioPrincipal extends javax.swing.JFrame {
-
-    private Usuario usuarioLogado;
-
-    public TelaUsuarioPrincipal(Usuario usuario) {
-        initComponents();
-        this.usuarioLogado = usuario;
-        lblUsuario.setText("Bem-vindo, " + usuario.getNome());
-    }
-
-    // Botão Criar Cadastro
-    private void btnCriarCadastroActionPerformed(java.awt.event.ActionEvent evt) {
-        new TelaCadastroProduto(usuarioLogado).setVisible(true);
-    }
-
-    // Botão Alterar Cadastro
-    private void btnAlterarCadastroActionPerformed(java.awt.event.ActionEvent evt) {
-        new TelaCadastroProduto(usuarioLogado, /*modoEdicao=*/true).setVisible(true);
-    }
-}
-```
-
-### Passo 2 – Decidir a tela no login (ligado ao item 1)
-
-Voltando ao login:
-
-```java
-if ("ADMIN".equalsIgnoreCase(logado.getTipo())) {
-    new TelaAdminPrincipal(logado).setVisible(true);
-} else {
-    new TelaUsuarioPrincipal(logado).setVisible(true);
-}
-this.dispose();
-```
-
-Assim:
-
-* Qualquer usuário com `tipo = 'ADMIN'` vê as telas completas e consegue administrar todos os usuários/cadastros.
-* Qualquer usuário com `tipo = 'USUARIO'` cai em uma tela mais simples, apenas com as funções que você quer (criar/alterar cadastros).
-
----
-
-## Resumo das ações pra você checar no seu projeto
-
-1. **Verificar o login**
-
-   * Garantir que você está usando um campo de tipo/perfil (`ADMIN` x `USUARIO`) vindo do banco, e não usuário fixo `admin/admin`.
-
-2. **Verificar os métodos de UPDATE (DAO)**
-
-   * Confirme se existem `atualizarUsuario`, `atualizarProduto`, etc.
-   * Confirme se usam `WHERE id = ?`.
-
-3. **Verificar as telas de edição**
-
-   * Quando seleciona um registro na tabela, o `id` vai para o campo escondido?
-   * O botão de salvar está fazendo “se tem ID -> atualizar; se não tem ID -> inserir”?
-
-4. **Criar/usar duas telas principais**
-
-   * `TelaAdminPrincipal` (para admins).
-   * `TelaUsuarioPrincipal` (para usuários comuns, só com criar/alterar).
-
----
-
-Se você quiser, no próximo passo você pode **copiar e colar aqui** especificamente:
-
-* O código do **`TelaLogin`**,
-* O `Usuario`
-* E o `UsuarioDAO`
-
-que eu adapto exatamente em cima do que você já tem (sem mudar o resto do projeto).
+**Universidade São Judas** | 2º Semestre - 2025 | Programação de Soluções Computacionais

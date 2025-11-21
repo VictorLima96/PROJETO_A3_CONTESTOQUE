@@ -51,7 +51,7 @@ public class TelaLogin extends JFrame {
     private void logar(java.awt.event.ActionEvent ev) {
         String usuario = txtUsuario.getText();
         String senha = new String(txtSenha.getPassword());
-        Usuario u = dao.login(usuario, senha);
+        Usuario u = dao.autenticarUsuario(usuario, senha);
         if (u != null) {
             JOptionPane.showMessageDialog(this, "Bem-vindo!");
             new TelaEstoque().setVisible(true);

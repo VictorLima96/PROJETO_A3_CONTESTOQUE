@@ -28,7 +28,7 @@ public class TelaAdminProdutos extends JFrame {
         panelBotoes.add(btnCadastrar);
 
         DefaultListModel<String> model = new DefaultListModel<>();
-        dao.getAll().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
+        dao.obterTodos().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
         JList<String> lista = new JList<>(model);
 
         add(panelBotoes, BorderLayout.NORTH);
