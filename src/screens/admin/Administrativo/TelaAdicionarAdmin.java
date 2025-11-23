@@ -1,16 +1,17 @@
-package ui;
+package screens.admin.Administrativo;
 
 import dao.UsuarioDAO;
 import java.awt.event.*;
 import javax.swing.*;
 import model.Usuario;
+import screens.admin.MenuInicio;
 
-public class TelaCadastroUsuario extends JFrame {
+public class TelaAdicionarAdmin extends JFrame {
     private final JTextField txtUsuario = new JTextField();
     private final JPasswordField txtSenha = new JPasswordField();
     private final JCheckBox chkAdmin = new JCheckBox("Administrador");
 
-    public TelaCadastroUsuario() {
+    public TelaAdicionarAdmin() {
         super("Cadastro de Usuário");
         setSize(350, 280);
         setLayout(null);
@@ -40,7 +41,7 @@ public class TelaCadastroUsuario extends JFrame {
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.setBounds(180, 140, 120, 30);
         btnVoltar.addActionListener(e -> {
-            new TelaEstoque().setVisible(true);
+            new MenuInicio().setVisible(true);
             dispose();
         });
         add(btnVoltar);

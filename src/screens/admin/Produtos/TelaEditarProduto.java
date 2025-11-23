@@ -1,13 +1,15 @@
-package ui;
-
+package screens.admin.Produtos;
+    
 import dao.ProdutoDAO;
+import screens.admin.MenuInicio;
+
 import java.awt.*;
 import javax.swing.*;
 
-public class TelaAdminProdutos extends JFrame {
+public class TelaEditarProduto extends JFrame {
     private final ProdutoDAO dao = new ProdutoDAO();
 
-    public TelaAdminProdutos() {
+    public TelaEditarProduto() {
         super("Administração de Produtos");
         setSize(500, 400);
         setLayout(new BorderLayout());
@@ -18,13 +20,13 @@ public class TelaAdminProdutos extends JFrame {
 
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(e -> {
-            new TelaEstoque().setVisible(true);
+            new MenuInicio().setVisible(true);
             dispose();
         });
         panelBotoes.add(btnVoltar);
 
         JButton btnCadastrar = new JButton("Cadastrar Produto");
-        btnCadastrar.addActionListener(e -> new TelaCadastroProduto().setVisible(true));
+        btnCadastrar.addActionListener(e -> new TelaCadastrarProduto().setVisible(true));
         panelBotoes.add(btnCadastrar);
 
         DefaultListModel<String> model = new DefaultListModel<>();

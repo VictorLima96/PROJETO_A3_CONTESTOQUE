@@ -3,11 +3,12 @@ package main;
 import javax.swing.JFrame;
 
 import database.sqlite.*;
-import ui.TelaLogin;
+import screens.TelaInicio;
 
 public class Main {
     private static void inicializarDependencias() {
-        new TabelasSQLite(ConectorSQLite.obterConexao());
+        var conn = ConectorSQLite.obterConexao();
+        new TabelasSQLite(conn);
     }
 
     private static void inicializarTelaInicio(JFrame tela) {
@@ -16,6 +17,6 @@ public class Main {
 
     public static void main(String[] args) {
         inicializarDependencias();
-        inicializarTelaInicio(new TelaLogin());
+        inicializarTelaInicio(new TelaInicio());
     }
 }

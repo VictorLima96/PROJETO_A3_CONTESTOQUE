@@ -1,15 +1,17 @@
-package ui;
+package screens.admin.Produtos;
+    
+import dao.ProdutoDAO;
+import screens.admin.MenuInicio;
 
-import dao.UsuarioDAO;
 import java.awt.*;
 import javax.swing.*;
 
-public class TelaAdminUsuarios extends JFrame {
-    private final UsuarioDAO dao = new UsuarioDAO();
+public class TelaAtualizarStatusProduto extends JFrame {
+    private final ProdutoDAO dao = new ProdutoDAO();
 
-    public TelaAdminUsuarios() {
-        super("Administração de Usuários");
-        setSize(450, 400);
+    public TelaAtualizarStatusProduto() {
+        super("Atualizar Status");
+        setSize(500, 400);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -18,17 +20,17 @@ public class TelaAdminUsuarios extends JFrame {
 
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(e -> {
-            new TelaEstoque().setVisible(true);
+            new MenuInicio().setVisible(true);
             dispose();
         });
         panelBotoes.add(btnVoltar);
 
-        JButton btnCadastrar = new JButton("Cadastrar Usuário");
-        btnCadastrar.addActionListener(e -> new TelaCadastroUsuario().setVisible(true));
+        JButton btnCadastrar = new JButton("Cadastrar Produto");
+        btnCadastrar.addActionListener(e -> new TelaAtualizarStatusProduto().setVisible(true));
         panelBotoes.add(btnCadastrar);
 
         DefaultListModel<String> model = new DefaultListModel<>();
-        dao.obterTodos().forEach(u -> model.addElement(u.getCodUsuario() + (u.getIsAdmin() ? " (admin)" : "")));
+        dao.obterTodos().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
         JList<String> lista = new JList<>(model);
 
         add(panelBotoes, BorderLayout.NORTH);

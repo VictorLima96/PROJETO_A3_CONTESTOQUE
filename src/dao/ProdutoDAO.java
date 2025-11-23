@@ -10,7 +10,7 @@ import model.Produto;
 public class ProdutoDAO {
 
     public void salvar(Produto p) {
-        String sql = "INSERT INTO produtos (nome, quantidade) VALUES (?,?)";
+        String sql = "INSERT INTO TB_Produtos (nome, quantidade) VALUES (?,?)";
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, p.getNome());
@@ -21,9 +21,27 @@ public class ProdutoDAO {
         }
     }
 
-    public List<Produto> obterTodos() {
+    public Produto buscarUm(String codProduto) {
+        String sql = "SELECT * FROM TB_Produtos WHERE codigoProduto = ?";
+        try (Connection c = ConectorSQLite.obterConexao()) {
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, codProduto);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Produto(
+                        rs.getString("nome"),
+                        rs.getInt("quantidade"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<Produto> buscarTodos() {
         List<Produto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM produtos";
+        String sql = "SELECT * FROM TB_Produtos";
         try (Connection c = ConectorSQLite.obterConexao();
              Statement s = c.createStatement();
              ResultSet rs = s.executeQuery(sql)) {

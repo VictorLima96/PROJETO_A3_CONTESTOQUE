@@ -1,20 +1,18 @@
 package model;
 
-import java.util.UUID;
-
 public class Usuario {
-    private UUID codUsuario = UUID.randomUUID();
+    private String id;
     private String nomeUsuario;
     private String senha;
     private String email;
     
     private boolean isAdmin = false;
 
-    public UUID getCodUsuario() {
-        return codUsuario;
+    public String getId() {
+        return this.id;
     }
-    public Usuario setCodUsuario(UUID codUsuario) {
-        this.codUsuario = codUsuario;
+    public Usuario setId(String id) {
+        this.id = id;
         return this;
     }
 

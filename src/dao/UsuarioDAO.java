@@ -3,7 +3,6 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
@@ -13,7 +12,7 @@ import model.Usuario;
 public class UsuarioDAO {
 
     public void criarUsuario(Usuario u) {
-        String sql = "INSERT INTO usuarios (nomeUsuario, senha, isAdmin) VALUES (?,?,?)";
+        String sql = "INSERT INTO TB_Usuarios (nomeUsuario, senha, isAdmin) VALUES (?,?,?)";
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
             p.setString(1, u.getNomeUsuario());
@@ -26,8 +25,8 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario editarUsuario(UUID codUsuario, String nomeUsuario, String senha, boolean isAdmin) {
-        String sql = "UPDATE usuarios SET nomeUsuario=?, senha=?, isAdmin=? WHERE codUsuario=?";
+    public Usuario editarUsuario(String codUsuario, String nomeUsuario, String senha, boolean isAdmin) {
+        String sql = "UPDATE TB_Usuarios SET nomeUsuario=?, senha=?, isAdmin=? WHERE codUsuario=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
@@ -48,7 +47,7 @@ public class UsuarioDAO {
     }
 
     public Usuario autenticarUsuario(String nomeUsuario, String senha) {
-        String sql = "SELECT * FROM usuarios WHERE nomeUsuario=? AND senha=?";
+        String sql = "SELECT * FROM TB_Usuarios WHERE nomeUsuario=? AND senha=?";
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
             p.setString(1, nomeUsuario);
@@ -56,7 +55,7 @@ public class UsuarioDAO {
             ResultSet rs = p.executeQuery();
             if (rs.next()) {
                 return new Usuario()
-                        .setCodUsuario(UUID.fromString(rs.getString("codUsuario")))
+                        .setId(rs.getString("id"))
                         .setNomeUsuario(rs.getString("nomeUsuario"))
                         .setSenha(rs.getString("senha"))
                         .setIsAdmin(rs.getBoolean("isAdmin"));
@@ -68,8 +67,8 @@ public class UsuarioDAO {
         return null;
     }
 
-    public Usuario alterarSenha(UUID codUsuario, String senhaAtual, String novaSenha) {
-        String sql = "UPDATE usuarios SET senha=? WHERE codUsuario=? AND senha=?";
+    public Usuario alterarSenha(String codUsuario, String senhaAtual, String novaSenha) {
+        String sql = "UPDATE TB_Usuarios SET senha=? WHERE codUsuario=? AND senha=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
@@ -94,13 +93,13 @@ public class UsuarioDAO {
     public List<Usuario> obterTodos() {
 
         List<Usuario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM usuarios";
+        String sql = "SELECT * FROM TB_Usuarios";
         try (Connection c = ConectorSQLite.obterConexao();
              Statement s = c.createStatement();
              ResultSet rs = s.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new Usuario()
-                        .setCodUsuario(UUID.fromString("codUsuario"))
+                        .setId(rs.getString("id"))
                         .setNomeUsuario(rs.getString("nomeUsuario"))
                         .setSenha(rs.getString("senha"))
                         .setIsAdmin(rs.getBoolean("isAdmin")));
@@ -112,9 +111,9 @@ public class UsuarioDAO {
         return lista;
     }
 
-    public Usuario obterUm(UUID codUsuario) {
+    public Usuario obterUm(String codUsuario) {
         Usuario usuario = new Usuario();
-        String sql = "SELECT * FROM usuarios WHERE codUsuario=?";
+        String sql = "SELECT * FROM TB_Usuarios WHERE codUsuario=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
@@ -123,8 +122,8 @@ public class UsuarioDAO {
             ResultSet rs = p.executeQuery();
 
             while (rs.first()) {
-                return usuario.
-                setCodUsuario(codUsuario)
+                return usuario
+                .setId(rs.getString("id"))
                 .setNomeUsuario(rs.getString("nomeUsuario"))
                 .setSenha(rs.getString("senha"))
                 .setIsAdmin(rs.getBoolean("isAdmin"));

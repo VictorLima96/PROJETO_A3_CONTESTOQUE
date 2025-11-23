@@ -1,9 +1,12 @@
-package ui;
+package screens.auth;
 
 import dao.UsuarioDAO;
+
 import java.awt.event.*;
 import javax.swing.*;
+
 import model.Usuario;
+import screens.admin.MenuInicio;
 import utils.DarkModeToggle;
 
 public class TelaLogin extends JFrame {
@@ -13,26 +16,33 @@ public class TelaLogin extends JFrame {
 
     public TelaLogin() {
         super("Login");
-        setSize(350, 200);
+        setSize(400, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
         setResizable(false);
 
+        JButton btnRastrear = new JButton("Rastrear Encomenda");
+        btnRastrear.setBounds(200, 20, 180, 20);
+        btnRastrear.addActionListener(e -> {
+            // new TelaRastreamento().setVisible(true);
+        });
+        add(btnRastrear);
+
         JLabel lblUsuario = new JLabel("Usuário:");
-        lblUsuario.setBounds(30, 30, 80, 25);
+        lblUsuario.setBounds(30, 70, 80, 25);
         add(lblUsuario);
-        txtUsuario.setBounds(110, 30, 180, 25);
+        txtUsuario.setBounds(110, 70, 250, 25);
         add(txtUsuario);
 
         JLabel lblSenha = new JLabel("Senha:");
-        lblSenha.setBounds(30, 70, 80, 25);
+        lblSenha.setBounds(30, 100, 80, 25);
         add(lblSenha);
-        txtSenha.setBounds(110, 70, 180, 25);
+        txtSenha.setBounds(110, 100, 250, 25);
         add(txtSenha);
 
         JButton btnEntrar = new JButton("Entrar");
-        btnEntrar.setBounds(110, 110, 120, 28);
+        btnEntrar.setBounds(110, 140, 120, 28);
         getRootPane().setDefaultButton(btnEntrar);
         btnEntrar.addActionListener(this::logar);
         add(btnEntrar);
@@ -51,10 +61,13 @@ public class TelaLogin extends JFrame {
     private void logar(java.awt.event.ActionEvent ev) {
         String usuario = txtUsuario.getText();
         String senha = new String(txtSenha.getPassword());
-        Usuario u = dao.autenticarUsuario(usuario, senha);
-        if (u != null) {
+        Usuario usuarioEncontrado = dao.autenticarUsuario(usuario, senha);
+
+        System.out.println("Tentativa de login: " + usuarioEncontrado);
+
+        if (usuarioEncontrado != null) {
             JOptionPane.showMessageDialog(this, "Bem-vindo!");
-            new TelaEstoque().setVisible(true);
+            new MenuInicio();
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usuário/Senha incorretos!");
