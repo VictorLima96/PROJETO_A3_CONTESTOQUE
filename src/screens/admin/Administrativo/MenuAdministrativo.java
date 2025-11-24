@@ -10,7 +10,6 @@ public class MenuAdministrativo {
 
     final JMenuItem menuAdicionarAdministrador = new JMenuItem("Adicionar Administrador");
     
-    
     public MenuAdministrativo(JFrame parentFrame, JMenuBar menuBar) {
         JMenu menuAdministrativo = new JMenu("Administrativo");
 
