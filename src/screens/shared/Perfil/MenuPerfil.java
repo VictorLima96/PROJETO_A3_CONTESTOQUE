@@ -1,4 +1,4 @@
-package screens.admin.Perfil;
+package screens.shared.Perfil;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,17 +11,16 @@ public class MenuPerfil {
     final JFrame parentFrame;
 
     final JMenuItem menuTrocarSenha = new JMenuItem("Trocar Senha");
-    final JMenuItem menuSair = new JMenuItem("Sair");
-    
+    final JMenuItem menuDeslogar = new JMenuItem("Deslogar");
     
     public MenuPerfil(JFrame parentFrame, JMenuBar menuBar) {
         JMenu menuPerfil = new JMenu("Meu Usuário");
 
-        menuSair.addActionListener(this::buttonSairActionPerformed);
+        menuDeslogar.addActionListener(this::buttonSairActionPerformed);
         menuTrocarSenha.addActionListener(this::buttonTrocarSenhaActionPerformed);
 
         menuPerfil.add(menuTrocarSenha);
-        menuPerfil.add(menuSair);
+        menuPerfil.add(menuDeslogar);
 
         menuBar.add(menuPerfil);
         this.parentFrame = parentFrame;
@@ -34,6 +33,7 @@ public class MenuPerfil {
     }
 
     private void buttonTrocarSenhaActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // Implementar lógica para trocar senha
+        var tela = new TelaTrocarSenha();
+        tela.setVisible(true);
     }
 }

@@ -3,7 +3,7 @@ package main;
 import javax.swing.JFrame;
 
 import database.sqlite.*;
-import screens.TelaInicio;
+import screens.auth.TelaLogin;
 
 public class Main {
     private static void inicializarDependencias() {
@@ -17,6 +17,6 @@ public class Main {
 
     public static void main(String[] args) {
         inicializarDependencias();
-        inicializarTelaInicio(new TelaInicio());
+        inicializarTelaInicio(new TelaLogin());
     }
 }

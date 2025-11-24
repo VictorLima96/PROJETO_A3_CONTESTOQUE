@@ -1,15 +1,14 @@
-package screens.admin;
+package screens.external;
 
 import javax.swing.*;
 
-import screens.admin.Administrativo.MenuAdministrativo;
-import screens.admin.Perfil.MenuPerfil;
-import screens.admin.Produtos.MenuProdutos;
+import screens.external.Rastreio.MenuRastreio;
+import screens.shared.Perfil.MenuPerfil;
 
-public class MenuInicio extends JFrame  {
+public class MenuPublicoInicio extends JFrame  {
 
-    public MenuInicio() {
-        super("Estoque");
+    public MenuPublicoInicio() {
+        super("ConteEstoque");
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -18,10 +17,8 @@ public class MenuInicio extends JFrame  {
 
         JMenuBar menuBar = new JMenuBar();
      
+        new MenuRastreio(this, menuBar);
         new MenuPerfil(this, menuBar);
-        new MenuProdutos(this, menuBar);
-        new MenuAdministrativo(this, menuBar);
-
         setJMenuBar(menuBar);
         
         setVisible(true);

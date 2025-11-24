@@ -25,19 +25,19 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario editarUsuario(String codUsuario, String nomeUsuario, String senha, boolean isAdmin) {
-        String sql = "UPDATE TB_Usuarios SET nomeUsuario=?, senha=?, isAdmin=? WHERE codUsuario=?";
+    public Usuario editarUsuario(int id, String nomeUsuario, String senha, boolean isAdmin) {
+        String sql = "UPDATE TB_Usuarios SET nomeUsuario=?, senha=?, isAdmin=? WHERE id=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
             p.setString(1, nomeUsuario);
             p.setString(2, senha);
             p.setBoolean(3, isAdmin);
-            p.setString(4, codUsuario.toString());
+            p.setInt(4, id);
             int rows = p.executeUpdate();
 
             if (rows > 0) {
-                return obterUm(codUsuario);
+                return obterUm(id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,7 +55,7 @@ public class UsuarioDAO {
             ResultSet rs = p.executeQuery();
             if (rs.next()) {
                 return new Usuario()
-                        .setId(rs.getString("id"))
+                        .setId(rs.getInt("id"))
                         .setNomeUsuario(rs.getString("nomeUsuario"))
                         .setSenha(rs.getString("senha"))
                         .setIsAdmin(rs.getBoolean("isAdmin"));
@@ -67,17 +67,17 @@ public class UsuarioDAO {
         return null;
     }
 
-    public Usuario alterarSenha(String codUsuario, String senhaAtual, String novaSenha) {
-        String sql = "UPDATE TB_Usuarios SET senha=? WHERE codUsuario=? AND senha=?";
+    public Usuario alterarSenha(int id, String senhaAtual, String novaSenha) {
+        String sql = "UPDATE TB_Usuarios SET senha=? WHERE id=? AND senha=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
             p.setString(1, novaSenha);
-            p.setString(2, codUsuario.toString());
+            p.setInt(2, id);
             p.setString(3, senhaAtual);
             int rows = p.executeUpdate();
             if (rows > 0) {
-                Usuario usuario = obterUm(codUsuario);
+                Usuario usuario = obterUm(id);
                 if (usuario != null) {
                     usuario.setSenha(novaSenha);
                 }
@@ -99,7 +99,7 @@ public class UsuarioDAO {
              ResultSet rs = s.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(new Usuario()
-                        .setId(rs.getString("id"))
+                        .setId(rs.getInt("id"))
                         .setNomeUsuario(rs.getString("nomeUsuario"))
                         .setSenha(rs.getString("senha"))
                         .setIsAdmin(rs.getBoolean("isAdmin")));
@@ -111,19 +111,44 @@ public class UsuarioDAO {
         return lista;
     }
 
-    public Usuario obterUm(String codUsuario) {
+    public Usuario obterUm(int id) {
         Usuario usuario = new Usuario();
-        String sql = "SELECT * FROM TB_Usuarios WHERE codUsuario=?";
+        String sql = "SELECT * FROM TB_Usuarios WHERE id=?";
 
         try (Connection c = ConectorSQLite.obterConexao();
              PreparedStatement p = c.prepareStatement(sql)) {
 
-            p.setString(1, codUsuario.toString());
+            p.setInt(1, id);
             ResultSet rs = p.executeQuery();
 
-            while (rs.first()) {
+            while (rs.next()) {
                 return usuario
-                .setId(rs.getString("id"))
+                .setId(rs.getInt("id"))
+                .setNomeUsuario(rs.getString("nomeUsuario"))
+                .setSenha(rs.getString("senha"))
+                .setIsAdmin(rs.getBoolean("isAdmin"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao obter o usuário.");
+        }
+        
+        return null;
+    }
+
+    public Usuario obterUmPorNome(String nomeUsuario) {
+        Usuario usuario = new Usuario();
+        String sql = "SELECT * FROM TB_Usuarios WHERE nomeUsuario=?";
+
+        try (Connection c = ConectorSQLite.obterConexao();
+             PreparedStatement p = c.prepareStatement(sql)) {
+
+            p.setString(1, nomeUsuario);
+            ResultSet rs = p.executeQuery();
+
+            while (rs.next()) {
+                return usuario
+                .setId(rs.getInt("id"))
                 .setNomeUsuario(rs.getString("nomeUsuario"))
                 .setSenha(rs.getString("senha"))
                 .setIsAdmin(rs.getBoolean("isAdmin"));

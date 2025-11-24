@@ -1,17 +1,18 @@
 package model;
 
 public class Usuario {
-    private String id;
+    private int id;
     private String nomeUsuario;
     private String senha;
     private String email;
+    private String telefone;
     
     private boolean isAdmin = false;
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
-    public Usuario setId(String id) {
+    public Usuario setId(int id) {
         this.id = id;
         return this;
     }
@@ -37,6 +38,14 @@ public class Usuario {
     }
     public Usuario setSenha(String senha) {
         this.senha = senha;
+        return this;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+    public Usuario setTelefone(String telefone) {
+        this.telefone = telefone;
         return this;
     }
 

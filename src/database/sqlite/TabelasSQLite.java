@@ -16,8 +16,8 @@ public final class TabelasSQLite {
         );
         """;
 
-    public static final String TABELA_ENCOMENDAS = """
-        CREATE TABLE IF NOT EXISTS TB_Encomendas (
+    public static final String TABELA_PRODUTOS = """
+        CREATE TABLE IF NOT EXISTS TB_Produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             tipo TEXT NOT NULL,
@@ -25,12 +25,13 @@ public final class TabelasSQLite {
             largura REAL NOT NULL,
             profundidade REAL NOT NULL,
             idUsuario INTEGER NOT NULL,
-            codRastreio TEXT
+            codRastreio TEXT,
+            status TEXT NOT NULL
         );
         """;
 
     public static final String INSERIR_ADMIN_PADRAO = """
-        INSERT INTO TB_Usuarios (nomeUsuario, senha, isAdmin)
+        INSERT OR IGNORE INTO TB_Usuarios (nomeUsuario, senha, isAdmin)
         VALUES ('admin', '12345', 1);
         """;
     
@@ -39,7 +40,7 @@ public final class TabelasSQLite {
         this.conexao = conexao;
 
         inicializarTabela(TABELA_USUARIOS);
-        inicializarTabela(TABELA_ENCOMENDAS);
+        inicializarTabela(TABELA_PRODUTOS);
         inicializarTabela(INSERIR_ADMIN_PADRAO);
     }
 

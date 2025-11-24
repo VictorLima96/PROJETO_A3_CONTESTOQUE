@@ -24,9 +24,8 @@ public class MenuAdministrativo {
     }
 
     private void buttonAdicionarAdministradorActionPerformed(java.awt.event.ActionEvent evt) {             
-        var tela = new TelaAdicionarAdmin();
+        var tela = new TelaCadastrarAdmin();
         tela.setVisible(true);
-        parentFrame.dispose();
     }
 
 }

@@ -2,11 +2,9 @@ package screens;
 
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.text.JTextComponent;
 
 import screens.auth.TelaLogin;
-import screens.external.TelaRastreio;
+import screens.external.Rastreio.TelaRastreio;
 import utils.DarkModeToggle;
 
 public class TelaInicio extends JFrame {
@@ -31,8 +29,6 @@ public class TelaInicio extends JFrame {
         txtInformativo.setEditable(false);
         txtInformativo.setBounds(25, 110, 350, 30);
         add(txtInformativo);
-
-
 
         JButton btnRastrear = new JButton("Quero rastrear um produto");
         btnRastrear.setBounds(100, 150, 200, 50);

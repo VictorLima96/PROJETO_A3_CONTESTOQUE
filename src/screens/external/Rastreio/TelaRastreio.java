@@ -1,44 +1,47 @@
-package screens.external;
+package screens.external.Rastreio;
 
 import dao.ProdutoDAO;
 import dao.UsuarioDAO;
 
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
+
 import javax.swing.*;
 
 import model.Produto;
-import model.Usuario;
-import screens.admin.MenuInicio;
-import utils.DarkModeToggle;
+import screens.TelaInicio;
 
 public class TelaRastreio extends JFrame {
-    private final ProdutoDAO dao = new ProdutoDAO();
+    private final ProdutoDAO produtoDAO = new ProdutoDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     private final JTextField txtCodProduto = new JTextField();
-    private final JTextField txtDescricaoProduto = new JTextField();
+    private final JTextField txtNomeProduto = new JTextField();
     private final JTextField txtAlturaProduto = new JTextField();
     private final JTextField txtLarguraProduto = new JTextField();
     private final JTextField txtProfundidadeProduto = new JTextField();
     private final JTextField txtStatusProduto = new JTextField();
     private final JTextField txtContato = new JTextField();
 
-
+    private Produto produto = new Produto();
+    
     public TelaRastreio() {
         super("Rastreio de Produto");
         setSize(400, 500);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+         setAlwaysOnTop(true);
         setLocationRelativeTo(null);
         setLayout(null);
         setResizable(false);
 
         JLabel lblCodProduto = new JLabel("Código do produto:");
-        lblCodProduto.setBounds(30, 70, 80, 25);
+        lblCodProduto.setBounds(30, 70, 140, 25);
         add(lblCodProduto);
-        txtCodProduto.setBounds(110, 70, 250, 25);
+        txtCodProduto.setBounds(160, 70, 200, 25);
         add(txtCodProduto);
 
         JButton btnRastrear = new JButton("Rastrear");
-        btnRastrear.setBounds(110, 140, 120, 28);
+        btnRastrear.setBounds(30, 120, 120, 28);
         getRootPane().setDefaultButton(btnRastrear);
         btnRastrear.addActionListener(this::buscarProduto);
         add(btnRastrear);
@@ -46,9 +49,9 @@ public class TelaRastreio extends JFrame {
         JLabel lblDescricaoProduto = new JLabel("Descrição:");
         lblDescricaoProduto.setBounds(30, 190, 100, 25);
         add(lblDescricaoProduto);
-        txtDescricaoProduto.setBounds(140, 190, 220, 25);
-        txtDescricaoProduto.setEditable(false);
-        add(txtDescricaoProduto);
+        txtNomeProduto.setBounds(140, 190, 220, 25);
+        txtNomeProduto.setEditable(false);
+        add(txtNomeProduto);
 
         JLabel lblAlturaProduto = new JLabel("Altura (cm):");
         lblAlturaProduto.setBounds(30, 230, 100, 25);
@@ -76,14 +79,23 @@ public class TelaRastreio extends JFrame {
         add(lblStatusProduto);
         txtStatusProduto.setBounds(140, 350, 220, 25);
         txtStatusProduto.setEditable(false);
+        txtStatusProduto.setToolTipText("Entre em contato com o fornecedor para mais informações.");
         add(txtStatusProduto);
 
         JLabel lblContato = new JLabel("Contato:");
         lblContato.setBounds(30, 390, 100, 25);
-        add(lblContato);
         txtContato.setBounds(140, 390, 220, 25);
         txtContato.setEditable(false);
-        add(txtContato);
+
+        if(produto.getCodRastreio() != null) {
+            var usuario = usuarioDAO.obterUm(produto.getCodUsuario());
+            if(usuario != null) {
+                txtContato.setText(usuario.getEmail());
+                add(lblContato);
+                add(txtContato);
+            }
+        
+        } 
     }
 
     private void buscarProduto(java.awt.event.ActionEvent ev) {
@@ -101,7 +113,7 @@ public class TelaRastreio extends JFrame {
         }
 
         try {
-            Produto produto = dao.buscarUm(codigo);
+            Produto produto = produtoDAO.buscarUm(codigo);
 
             if (produto == null) {
                 JOptionPane.showMessageDialog(
@@ -114,12 +126,13 @@ public class TelaRastreio extends JFrame {
                 return;
             }
 
-            txtDescricaoProduto.setText(produto.getDescricao());
+            this.produto = produto;
+
+            txtNomeProduto.setText(produto.getNome());
             txtAlturaProduto.setText(String.valueOf(produto.getAltura()));
             txtLarguraProduto.setText(String.valueOf(produto.getLargura()));
             txtProfundidadeProduto.setText(String.valueOf(produto.getProfundidade()));
             txtStatusProduto.setText(produto.getStatus());
-            txtContato.setText(produto.getContato());
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
@@ -132,7 +145,7 @@ public class TelaRastreio extends JFrame {
     }
 
     private void limparCampos() {
-        txtDescricaoProduto.setText("");
+        txtNomeProduto.setText("");
         txtAlturaProduto.setText("");
         txtLarguraProduto.setText("");
         txtProfundidadeProduto.setText("");

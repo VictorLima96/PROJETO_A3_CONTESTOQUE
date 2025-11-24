@@ -8,7 +8,6 @@ import database.sqlite.ConectorSQLite;
 import model.Produto;
 
 public class ProdutoDAO {
-
     public void salvar(Produto p) {
         String sql = "INSERT INTO TB_Produtos (nome, quantidade) VALUES (?,?)";
         try (Connection c = ConectorSQLite.obterConexao();
@@ -28,9 +27,11 @@ public class ProdutoDAO {
             ps.setString(1, codProduto);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Produto(
-                        rs.getString("nome"),
-                        rs.getInt("quantidade"));
+                return new Produto().setId(rs.getInt("id"))
+                        .setNome(rs.getString("nome"))
+                        .setQuantidade(rs.getInt("quantidade"))
+                        
+                        ;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,9 +46,14 @@ public class ProdutoDAO {
         try (Connection c = ConectorSQLite.obterConexao();
              Statement s = c.createStatement();
              ResultSet rs = s.executeQuery(sql)) {
-            while (rs.next()) lista.add(new Produto(
-                    rs.getString("nome"),
-                    rs.getInt("quantidade")));
+            while (rs.next()) lista.add(new Produto().setId(rs.getInt("id"))
+                    .setNome(rs.getString("nome"))
+                    .setQuantidade(rs.getInt("quantidade"))
+                    .setAltura(rs.getDouble("altura"))
+                    .setLargura(rs.getDouble("largura"))
+                    .setProfundidade(rs.getDouble("profundidade"))
+                    .setStatus(rs.getString("status"))
+            );
         } catch (SQLException e) {
             e.printStackTrace();
         }

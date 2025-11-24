@@ -1,7 +1,7 @@
 package screens.admin.Produtos;
     
 import dao.ProdutoDAO;
-import screens.admin.MenuInicio;
+import screens.admin.MenuAdminInicio;
 
 import java.awt.*;
 import javax.swing.*;
@@ -20,7 +20,7 @@ public class TelaAtualizarStatusProduto extends JFrame {
 
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(e -> {
-            new MenuInicio().setVisible(true);
+            new MenuAdminInicio().setVisible(true);
             dispose();
         });
         panelBotoes.add(btnVoltar);
@@ -30,7 +30,7 @@ public class TelaAtualizarStatusProduto extends JFrame {
         panelBotoes.add(btnCadastrar);
 
         DefaultListModel<String> model = new DefaultListModel<>();
-        dao.obterTodos().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
+        dao.buscarTodos().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
         JList<String> lista = new JList<>(model);
 
         add(panelBotoes, BorderLayout.NORTH);
