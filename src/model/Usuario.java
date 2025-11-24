@@ -1,20 +1,59 @@
 package model;
 
 public class Usuario {
-    private String usuario;
+    private int id;
+    private String nomeUsuario;
     private String senha;
-    private boolean admin;
+    private String email;
+    private String telefone;
+    
+    private boolean isAdmin = false;
 
-    public Usuario(String usuario, String senha, boolean admin) {
-        this.usuario = usuario;
-        this.senha = senha;
-        this.admin = admin;
+    public int getId() {
+        return this.id;
+    }
+    public Usuario setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    public String getUsuario() { return usuario; }
-    public void setUsuario(String usuario) { this.usuario = usuario; }
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-    public boolean isAdmin() { return admin; }
-    public void setAdmin(boolean admin) { this.admin = admin; }
+    public String getEmail() {
+        return email;
+    }
+    public Usuario setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public String getNomeUsuario() {
+        return nomeUsuario;
+    }
+    public Usuario setNomeUsuario(String nomeUsuario) {
+        this.nomeUsuario = nomeUsuario;
+        return this;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+    public Usuario setSenha(String senha) {
+        this.senha = senha;
+        return this;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+    public Usuario setTelefone(String telefone) {
+        this.telefone = telefone;
+        return this;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+    public Usuario setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
+        return this;
+    }
 }

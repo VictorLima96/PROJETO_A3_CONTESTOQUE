@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Inicializa Projeto Java A3",
+      "env": {
+        "SQLLITE_DB_PATH": "${workspaceFolder}/data/database.db"
+      }
+    }
+  ]
+}
