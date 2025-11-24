@@ -8,42 +8,23 @@ import javax.swing.JMenuItem;
 public class MenuProdutos {
     final JFrame parentFrame;
 
-    final JMenuItem menuCadastrarProduto = new JMenuItem("Cadastrar Produto");
-    final JMenuItem menuEditarProduto = new JMenuItem("Editar Produto");
-    final JMenuItem menuAtualizarStatus = new JMenuItem("Atualizar Status do Produto");
+    final JMenuItem menuListarProdutos = new JMenuItem("Administrar Produtos");
     
     
     public MenuProdutos(JFrame parentFrame, JMenuBar menuBar) {
         JMenu menuProdutos = new JMenu("Produtos");
 
-        menuCadastrarProduto.addActionListener(this::buttonCadastrarProdutoActionPerformed);
-        menuEditarProduto.addActionListener(this::buttonEditarProdutoActionPerformed);
-        menuAtualizarStatus.addActionListener(this::buttonAtualizarStatusActionPerformed);
+        menuListarProdutos.addActionListener(this::buttonListarProdutosActionPerformed);
 
-        menuProdutos.add(menuCadastrarProduto);
-        menuProdutos.add(menuEditarProduto);
-        menuProdutos.add(menuAtualizarStatus);
-        
+        menuProdutos.add(menuListarProdutos);
+    
         menuBar.add(menuProdutos);
         
         this.parentFrame = parentFrame;
     }
 
-    private void buttonCadastrarProdutoActionPerformed(java.awt.event.ActionEvent evt) {             
-        var tela = new TelaCadastrarProduto();
+    private void buttonListarProdutosActionPerformed(java.awt.event.ActionEvent evt) {             
+        var tela = new TelaListarProduto();
         tela.setVisible(true);
-        parentFrame.dispose();
-    }
-
-    private void buttonEditarProdutoActionPerformed(java.awt.event.ActionEvent evt) {      
-        var tela = new TelaEditarProduto();
-        tela.setVisible(true);
-        parentFrame.dispose();
-    }
-
-    private void buttonAtualizarStatusActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        var tela = new TelaAtualizarStatusProduto();
-        tela.setVisible(true);
-        parentFrame.dispose();
     }
 }

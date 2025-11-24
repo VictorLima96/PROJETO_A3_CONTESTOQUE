@@ -1,40 +1,57 @@
 package screens.admin.Produtos;
 
 import dao.ProdutoDAO;
-import screens.admin.MenuInicio;
+import model.Produto;
 
 import java.awt.*;
 import javax.swing.*;
-
+import java.util.List;
 public class TelaListarProduto extends JFrame {
     private final ProdutoDAO dao = new ProdutoDAO();
 
+    private List<Produto> produtos;
+    private JList<String> listaProdutos = new JList<>();
+
     public TelaListarProduto() {
-        super("Administração de Produtos");
-        setSize(500, 400);
+        super("Administrar Produtos");
+        setSize(800, 400);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        buscarProdutos();
 
         JPanel panelBotoes = new JPanel(new FlowLayout());
 
-        JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.addActionListener(e -> {
-            new MenuInicio().setVisible(true);
-            dispose();
-        });
-        panelBotoes.add(btnVoltar);
-
         JButton btnCadastrar = new JButton("Cadastrar Produto");
-        btnCadastrar.addActionListener(e -> new TelaCadastrarProduto().setVisible(true));
+        btnCadastrar.addActionListener(e -> new TelaCadastrarProduto(() -> {
+            buscarProdutos();
+        }).setVisible(true));
         panelBotoes.add(btnCadastrar);
 
-        DefaultListModel<String> model = new DefaultListModel<>();
-        dao.obterTodos().forEach(p -> model.addElement(p.getNome() + " - Quantidade: " + p.getQuantidade()));
-        JList<String> lista = new JList<>(model);
+        JButton btnEditar = new JButton("Editar Produto");
+        btnEditar.addActionListener(e -> new TelaEditarProduto(() -> {
+            buscarProdutos();
+        }).setVisible(true));
+        panelBotoes.add(btnEditar);
+
+        JButton btnRemover = new JButton("Remover Produto");
+        btnRemover.addActionListener(e -> new TelaRemoverProduto(() -> {
+            buscarProdutos();
+        }).setVisible(true));
+        panelBotoes.add(btnRemover);
 
         add(panelBotoes, BorderLayout.NORTH);
-        add(new JScrollPane(lista), BorderLayout.CENTER);
+        add(new JScrollPane(listaProdutos), BorderLayout.CENTER);
         setVisible(true);
+    }
+
+    private void buscarProdutos() {
+        produtos = dao.buscarTodos();
+        
+        DefaultListModel<String> model = new DefaultListModel<>();
+        this.produtos.forEach(p -> model.addElement("Código: " + p.getCodProduto() + " | Produto: " + p.getNome() + " | Quantidade em Estoque: " + p.getQuantidade() + " | Status: " + p.getStatus()));
+
+        listaProdutos.setModel(model);
+        listaProdutos.repaint();
     }
 }

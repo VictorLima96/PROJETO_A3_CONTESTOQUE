@@ -19,13 +19,10 @@ public final class TabelasSQLite {
     public static final String TABELA_PRODUTOS = """
         CREATE TABLE IF NOT EXISTS TB_Produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            descricao TEXT NOT NULL,
-            tipo TEXT NOT NULL,
-            altura REAL NOT NULL,
-            largura REAL NOT NULL,
-            profundidade REAL NOT NULL,
-            idUsuario INTEGER NOT NULL,
-            codRastreio TEXT,
+            nome TEXT NOT NULL,
+            quantidade INTEGER NOT NULL,
+            codProduto TEXT NOT NULL,
+            codUsuario INTEGER NOT NULL,
             status TEXT NOT NULL
         );
         """;

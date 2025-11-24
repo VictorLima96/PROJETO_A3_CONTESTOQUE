@@ -4,13 +4,9 @@ public class Produto {
     private int id;
     private String nome;
     private int quantidade;
-    private String tipo;
-    private double altura;
-    private double largura;
-    private double profundidade;
-    private String codRastreio;
-    private int codUsuario;
     private String status; 
+    private String codProduto;
+    private int codUsuario; 
 
     public int getId() {
         return id;
@@ -40,43 +36,11 @@ public class Produto {
         return this;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getCodProduto() {
+        return codProduto;
     }
-    public Produto setTipo(String tipo) {
-        this.tipo = tipo;
-        return this;
-    }
-
-    public double getAltura() {
-        return altura;
-    }
-    public Produto setAltura(double altura) {
-        this.altura = altura;
-        return this;
-    }
-
-    public double getLargura() {
-        return largura;
-    }
-    public Produto setLargura(double largura) {
-        this.largura = largura;
-        return this;
-    }
-
-    public double getProfundidade() {
-        return profundidade;
-    }
-    public Produto setProfundidade(double profundidade) {
-        this.profundidade = profundidade;
-        return this;
-    }
-
-    public String getCodRastreio() {
-        return codRastreio;
-    }
-    public Produto setCodRastreio(String codRastreio) {
-        this.codRastreio = codRastreio;
+    public Produto setCodProduto(String codProduto) {
+        this.codProduto = codProduto;
         return this;
     }
 
